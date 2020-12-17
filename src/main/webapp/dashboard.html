@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Placement Dashboard</title>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/form-validation.css" rel="stylesheet">
+</head>
+<body>
+<div class = "container">
+
+    <form id="applyPlac" method="post">
+        <label for="cv_application">Upload CV</label>
+        <input class="form-control" id="cv_application" type="file" value="cv_application" accept=".pdf"/>
+        <input id="student_id" type="text" hidden/>
+    </form>
+
+    Eligible placements :
+    <div id = "showData"></div>
+
+    <button id="histBtn" name="hist" type="button" >See history</button>
+    <div id="showHist"></div>
+</div>
+
+</body>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/load_placements.js"></script>
+
+</html>
