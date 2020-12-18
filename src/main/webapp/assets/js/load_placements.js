@@ -71,7 +71,7 @@ window.onload = fetchPlacements().then(result => {
     }
     for(let i=0; i<btns.length;i++){
         (function(i) {
-            btns[i].onclick =  function() {
+            btns[i].onclick = async function() {
                 // window.sessionStorage["apply_plac_id"] = btns[i].name;
                 var cv_application="";
                 if(cv_file.files!==undefined && cv_file.files.length > 0){
@@ -95,6 +95,22 @@ window.onload = fetchPlacements().then(result => {
                         return result;
                     }
                     reader.readAsBinaryString(cv_file.files[0]);
+                }else{
+                    let form_data = new FormData();
+                    form_data.append('placement_id', btns[i].name);
+                    form_data.append('student_id', document.getElementById("student_id").innerText);
+                    form_data.append('about', "");
+                    form_data.append('cv_application', cv_application);
+                    form_data.append('acceptance', "PENDING");
+                    form_data.append('comments', "");
+                    form_data.append('date', new Date().getFullYear() + "-"+(new Date().getMonth()+1)+"-"+new Date().getDate());
+                    let response = await fetch('api/students/apply', {
+                        method: 'POST',
+                        body: form_data
+                    });
+                    const result = await response.json();
+                    return result;
+
                 }
 
             }
@@ -124,49 +140,51 @@ async function see_hist(){
     return res2;
 }
 
-hist_btn.onclick = see_hist().then(res2 => {
+hist_btn.addEventListener('click', function(){
+    see_hist().then(res2 => {
 
-    // var pdata = JSON.parse(JSON.stringify(result)).placement_list;
-    //Load data into table
-    let i;
-    let pdata2 = res2.application_list;
-    console.log(res2);
-    var col2 = [];
-    for (i = 0; i < pdata2.length; i++) {
-        for (let key in pdata2[i]) {
-            if (col2.indexOf(key) === -1) {
-                col2.push(key);
+        // var pdata = JSON.parse(JSON.stringify(result)).placement_list;
+        //Load data into table
+        let i;
+        let pdata2 = res2.application_list;
+        console.log(res2);
+        var col2 = [];
+        for (i = 0; i < pdata2.length; i++) {
+            for (let key in pdata2[i]) {
+                if (col2.indexOf(key) === -1) {
+                    col2.push(key);
+                }
             }
         }
-    }
 
-    // CREATE DYNAMIC TABLE.
-    var table2 = document.createElement("table");
+        // CREATE DYNAMIC TABLE.
+        var table2 = document.createElement("table");
 
-    // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+        // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
 
-    var tr = table2.insertRow(-1);                   // TABLE ROW.
+        var tr = table2.insertRow(-1);                   // TABLE ROW.
 
-    for (i = 0; i < col2.length; i++) {
-        let th = document.createElement("th");      // TABLE HEADER.
-        th.innerHTML = col2[i];
-        tr.appendChild(th);
-    }
-
-    // ADD JSON DATA TO THE TABLE AS ROWS.
-    for (i = 0; i < pdata2.length; i++) {
-
-        tr = table2.insertRow(-1);
-
-        for (let j = 0; j < col2.length; j++) {
-            let tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = pdata2[i][col2[j]];
+        for (i = 0; i < col2.length; i++) {
+            let th = document.createElement("th");      // TABLE HEADER.
+            th.innerHTML = col2[i];
+            tr.appendChild(th);
         }
-    }
 
-    // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
-    var divContainer2 = document.getElementById("showHist");
-    divContainer2.innerHTML = "";
-    divContainer2.appendChild(table2);
+        // ADD JSON DATA TO THE TABLE AS ROWS.
+        for (i = 0; i < pdata2.length; i++) {
 
+            tr = table2.insertRow(-1);
+
+            for (let j = 0; j < col2.length; j++) {
+                let tabCell = tr.insertCell(-1);
+                tabCell.innerHTML = pdata2[i][col2[j]];
+            }
+        }
+
+        // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+        var divContainer2 = document.getElementById("showHist");
+        divContainer2.innerHTML = "";
+        divContainer2.appendChild(table2);
+
+    })
 });
