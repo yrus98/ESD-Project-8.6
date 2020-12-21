@@ -52,17 +52,21 @@ public class StudentsDAOImpl implements StudentsDAO {
 
     @Override
     public String fetchPlacementsList(Students student) {
-        Session session = SessionUtil.getSession();
-        ObjectMapper obj = new ObjectMapper();
-        try{
+        try (Session session = SessionUtil.getSession()) {
+            ObjectMapper obj = new ObjectMapper();
             Students studData = fetchStudentDataFromEmail(student);
-            boolean isPlaced = (studData.getPlacement()!=null)?true : false;
-            String s = "{ \"student_data\" : { \"student_id\":"+studData.getStudent_id()+", \"fist_name\":\""+studData.getFirst_name()+"\", \"last_name\":\""+studData.getLast_name()+"\", \"roll_no\":\""+studData.getRoll_no()+"\", \"isPlaced\":\""+isPlaced+"\", \"email\":\""+studData.getEmail()
-                    +"\", \"photo_path\":\""+studData.getPhotograph_path()+"\", \"cgpa\":"+studData.getCgpa().toString()+", \"credits\":"+studData.getTotal_credits().toString()+", \"grad_year\":"+studData.getGraduation_year()+", \"domain\":\""+studData.getDomain()+"\", \"spec\":\""+studData.getSpecialization()+"\"}";
+            boolean isPlaced = studData.getPlacement() != null;
+            String s = "{ \"student_data\" : { \"student_id\":" + studData.getStudent_id() + ", \"fist_name\":\"" + studData.getFirst_name() + "\", \"last_name\":\"" + studData.getLast_name() + "\", \"roll_no\":\"" + studData.getRoll_no() + "\", \"isPlaced\":\"" + isPlaced + "\", \"email\":\"" + studData.getEmail()
+                    + "\", \"photo_path\":\"" + studData.getPhotograph_path() + "\", \"cgpa\":" + studData.getCgpa().toString() + ", \"credits\":" + studData.getTotal_credits().toString() + ", \"grad_year\":" + studData.getGraduation_year() + ", \"domain\":\"" + studData.getDomain() + "\", \"spec\":\"" + studData.getSpecialization() + "\"}";
             s += ", \"placement_list\" : [ ";
-            if(!isPlaced) {
+            if (!isPlaced) {
+                List<Integer> appliedList = new ArrayList<>();
+                for (Placement_Student p_s:studData.getPlacement_studentsList()) {
+                    appliedList.add(p_s.getPlacement().getId());
+                }
                 Query query;
-                query = session.createQuery("select p from Placement p left join p.placement_filter f where p.minimum_grade <= :studGrade");
+                query = session.createQuery("select p from Placement p left join p.placement_filter f where p.id not in (:appliedList) and p.minimum_grade <= :studGrade");
+                query.setParameter("appliedList", appliedList);
                 query.setParameter("studGrade", studData.getCgpa());
                 List<Placement> list = query.getResultList();
                 System.out.println(studData.getCgpa() + " " + list.size());
@@ -75,23 +79,20 @@ public class StudentsDAOImpl implements StudentsDAO {
                     s = s + "{ \"placement_id\":" + p.getId() + ", \"org_name\":\"" + p.getOrganization() + "\", \"profile\":\"" + p.getProfile() + "\", \"description\":\"" + p.getDescription() + "\", \"intake\":" + p.getIntake().toString() + ", \"minimum_grade\":" + p.getMinimum_grade().toString() + "},";
                     //                s.append(obj.writeValueAsString(p));
                 }
-                s = s.substring(0,s.length()-1) + " ] ";
-            }else{
+                s = s.substring(0, s.length() - 1) + " ] ";
+            } else {
                 s += "], \"company_details\" : {";
-                s+= "\"placement_id\":" + studData.getPlacement().getId() + ", \"org_name\":\"" + studData.getPlacement().getOrganization() + "\", \"profile\":\"" + studData.getPlacement().getProfile() + "\", \"description\":\"" + studData.getPlacement().getDescription() + "\" }";
+                s += "\"placement_id\":" + studData.getPlacement().getId() + ", \"org_name\":\"" + studData.getPlacement().getOrganization() + "\", \"profile\":\"" + studData.getPlacement().getProfile() + "\", \"description\":\"" + studData.getPlacement().getDescription() + "\" }";
             }
-            s= s + "}";
+            s = s + "}";
             System.out.println(s);
             return s.toString();
         } catch (HibernateException exception) {
             System.out.print(exception.getLocalizedMessage());
             return "Error";
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return "Error";
-        }
-        finally {
-            session.close();
         }
     }
 

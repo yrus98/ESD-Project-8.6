@@ -31,7 +31,7 @@ public class Students {
 	@JoinColumn(name = "placement_id", referencedColumnName = "id")
 	private Placement placement;
 
-	@OneToMany(mappedBy = "students")
+	@OneToMany(mappedBy = "students", fetch = FetchType.EAGER)
 	private List<Placement_Student> placement_studentsList;
 
 	public Students() {
