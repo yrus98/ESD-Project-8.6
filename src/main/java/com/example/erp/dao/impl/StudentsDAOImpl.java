@@ -62,6 +62,9 @@ public class StudentsDAOImpl implements StudentsDAO {
                 for (Placement_Student p_s:studData.getPlacement_studentsList()) {
                     appliedList.add(p_s.getPlacement().getId());
                 }
+                if(appliedList==null || appliedList.isEmpty()){
+                    appliedList.add(0);
+                }
                 Query query;
                 query = session.createQuery("select p from Placement p left join p.placement_filter f where p.id not in (:appliedList) and p.minimum_grade <= :studGrade");
                 query.setParameter("appliedList", appliedList);
