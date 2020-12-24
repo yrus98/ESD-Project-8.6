@@ -1,24 +1,24 @@
----ESD project sql DDL--
-
 
 create table placement
 (
 	id int auto_increment,
 	organization varchar(20) not null,
 	profile varchar(20) not null,
-	description varchar(50) null,
+	description varchar(200) null,
 	intake int not null,
 	minimum_grade float null,
 	constraint placement_pk
 		primary key (id)
 );
 
-insert into placement values(20,'Google','Software Engineer','',3,3.4);
+insert into placement values(20,'Google','Software Engineer','',3,3.2);
 insert into placement values(default,'Microsoft','SE 2','',10,2.8);
 insert into placement values(default,'Flipkart','UI Developer','',5,2.5);
 insert into placement values(default,'Samsung','Hardware Engineer','',15,2.7);
-insert into placement values(default,'Rubric','Software Developer','',2,3.6);
+insert into placement values(default,'Rubric','Software Developer','',2,3.4);
 insert into placement values(default,'Amazon','SE','',15,3.0);
+insert into placement values(default,'Morgan Stanley','C++ Developer','Develop, test, improve, and maintain critical high-volume functions used by Finance for the majority of queries and reports. ',5,2.8);
+insert into placement values(default,'PayPal','Software Engineer','This position is for a software engineer in test in Credit Quality E2E team.',15,2.5);
 
 
 create table placement_filter
@@ -34,12 +34,14 @@ create table placement_filter
 			on update cascade on delete cascade
 );
 
-insert into placement_filter values(default,20,'AI/ML','CSE');
-insert into placement_filter values(default,21,'','CSE');
+insert into placement_filter values(default,20,'','CSE');
+insert into placement_filter values(default,21,'','');
 insert into placement_filter values(default,22,'NC','CSE');
-insert into placement_filter values(default,23,'VLSI','ECE');
-insert into placement_filter values(default,25,'','CSE');
-insert into placement_filter values(default,24,'','');
+insert into placement_filter values(default,23,'','ECE');
+insert into placement_filter values(default,24,'AI/ML','CSE');
+insert into placement_filter values(default,25,'','');
+insert into placement_filter values(default,26,'','');
+insert into placement_filter values(default,27,'','');
 
 
 create table students
@@ -62,9 +64,11 @@ create table students
 		foreign key (placement_id) references placement (id)
 );
 
-insert into students values(default,'MT123123','Sokka','Watertribe','abcd@gmail.com','',3.0,15,2020,'CSE','TCSD',NULL);
-insert into students values(default,'MT123456','Kakashi','Hatake','kaka@gmail.com','',3.6,12,2021,'ECE','',24);
+insert into students values(1,'MT123123','Sokka','Watertribe','abcd@gmail.com','',3.0,15,2020,'CSE','NC',NULL);
+insert into students values(default,'MT123456','Kakashi','Hatake','kaka@gmail.com','',3.6,12,2021,'ECE','',23);
 insert into students values(default,'DS123123','Itachi','Uchiha','xyz@gmail.com','',2.9,16,2020,'CSE','AI/ML',NULL);
+insert into students values(default,'MT111111','Light','Yagami','light@gmail.com','',3.8,16,2020,'CSE','AI/ML',NULL);
+insert into students values(default,'DS123456','Kaneki','Ken','kaneki@gmail.com','',3.0,12,2021,'ECE','',NULL);
 
 create table placement_student
 (
@@ -85,6 +89,9 @@ create table placement_student
 );
 
 
-insert into placement_student values(default,22 , 2, default, "somethin", default, "wip", "2020-08-08");
-insert into placement_student values(default,24 , 2, default, "", "REJECTED", "not good", "2019-05-05");
-insert into placement_student values(default,21 , 1, default, "offshore", default, "average", "2020-10-08");
+insert into placement_student values(default,21 , 1, default, "offshore", default, "Good interview", "2020-10-08");
+insert into placement_student values(default,24 , 1, default, "", "REJECTED", "Lacking technical knowledge", "2019-05-05");
+insert into placement_student values(default,21 , 2, default, "Full time", default, "None", "2020-08-08");
+insert into placement_student values(default,23 , 2, default, "", "ACCEPTED", "Join from 1st Jan 2021", "2020-06-05");
+
+create view ps_view as select id, placement_id, student_id, about, acceptance, comments, date from placement_student;

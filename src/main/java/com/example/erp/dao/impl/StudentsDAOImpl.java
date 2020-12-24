@@ -11,8 +11,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import javax.persistence.EntityManager;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
