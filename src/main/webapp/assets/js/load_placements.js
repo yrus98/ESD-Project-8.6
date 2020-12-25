@@ -43,7 +43,9 @@ window.onload = fetchPlacements().then( result => {
 
         let div2 = document.createElement('div');
         div2.className = 'card-header';
-        div2.innerHTML = 'Congratulations! , you have been accepted at ';
+        div2.innerHTML = 'Congratulations! , you have been placed at ';
+        div.appendChild(div2);
+
         let div3 = document.createElement('div');
         div3.className = 'card-body';
 
@@ -61,9 +63,7 @@ window.onload = fetchPlacements().then( result => {
         temp.className ='card-text';
         temp.innerHTML = 'Job Description : ' + result.company_details.description;
         div3.appendChild(temp);
-        div3.appendChild(temp);
-        div2.appendChild(div3);
-        div.appendChild(div2);
+        div.appendChild(div3);
         document.getElementById('showData').appendChild(div);
         return;
     }
@@ -86,6 +86,8 @@ window.onload = fetchPlacements().then( result => {
         let div2 = document.createElement('div');
         div2.className = 'card-header';
         div2.innerHTML = pdata[i]['org_name'];
+        div.appendChild(div2);
+
         let div3 = document.createElement('div');
         div3.className = 'card-body text-dark';
 
@@ -112,8 +114,7 @@ window.onload = fetchPlacements().then( result => {
         btns.push(btn);
         div3.appendChild(btn);
 
-        div2.appendChild(div3);
-        div.appendChild(div2);
+        div.appendChild(div3);
         document.getElementById('showData').appendChild(div);
 
     }
