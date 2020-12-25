@@ -95,3 +95,9 @@ insert into placement_student values(default,21 , 2, default, "Full time", defau
 insert into placement_student values(default,23 , 2, default, "", "ACCEPTED", "Join from 1st Jan 2021", "2020-06-05");
 
 create view ps_view as select id, placement_id, student_id, about, acceptance, comments, date from placement_student;
+
+update students set photograph_path='assets/img/sokka.jpeg' where student_id=1;
+update students set photograph_path='assets/img/Kakashi_Hatake.jpeg' where student_id=2;
+update students set photograph_path='assets/img/Itachi_Uchiha.jpeg' where student_id=3;
+update students set photograph_path='assets/img/light_yagami.jpeg' where student_id=4;
+update students set photograph_path='assets/img/Kaneki_Ken.jpeg' where student_id=5;

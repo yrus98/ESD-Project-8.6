@@ -1,26 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Placement Dashboard</title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/form-validation.css" rel="stylesheet">
+    <link  href="assets/css/profile.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/01fc7d854f.js" crossorigin="anonymous"></script>
 </head>
-<body>
-<div class = "container">
+<body class="tmainbody">
+<div class="tmainbody">
+    <br>
+    <div class=".container-fluid">
+        <div class="row" style="margin-left: 5px;">
+            <div class="col-md-4 mb-3">
+                <div class="row">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    <img id="img1" src="https://fastly.syfy.com/sites/syfy/files/wire/legacy/KakashiHatake_Naruto_0.png" alt="Admin" class="rounded-circle" width="150" height="150">
+                                    <div class="mt-3">
+                                        <h4 id="ppfullname">John Doe</h4>
+                                        <p class="text-muted font-size-sm" id="pprollnumber">Roll N.O :MT2020031</p>
+                                        <p><i class="fas fa-at"></i> <span class="text-secondary mb-1" id="ppemail">Email :abc@d.com</span></p>
+                                        <p><i class="fas fa-user-graduate"></i> <span class="text-secondary mb-1" id="ppdomain">CSE</span></p>
+                                        <p><i class="fas fa-graduation-cap"></i> <span class="text-secondary mb-1">Specialization : </span><span class="text-secondary mb-1" id="ppspecial">AI/ML</span></p>
+                                        <p><i class="fas fa-poll-h"></i> <span class="text-secondary mb-1">CGPA : </span><span class="text-secondary mb-1" id="ppcgpa">3.5</span></p>
 
-    <form id="applyPlac" method="post">
-        <label for="cv_application">Upload CV</label>
-        <input class="form-control" id="cv_application" type="file" value="cv_application" accept=".pdf"/>
-        <input id="student_id" type="text" hidden/>
-    </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 5px;">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="applyPlac" method="post">
+                                    <label for="cv_application" class="form-control bg bg-primary" style="text-align: center"><h5 class="text-white"><span id="upload_file_name"> Upload CV</span> &emsp;<i class="fas fa-file-upload" style="text-align: right"></i></h5></label>
+                                    <input class="form-control" id="cv_application" type="file" value="cv_application" accept=".pdf" hidden/>
+                                    <input id="student_id" type="text" hidden/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    Eligible placements :
-    <div id = "showData"></div>
+            <div class="col-md-8">
+                <div class="card ">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <button class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Apply</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="hist-tab" data-toggle="tab" href="#hist" role="tab" aria-controls="hist" aria-selected="false">History</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <div class="card-body" id="showData"></div>
+                        </div>
+                        <div class="tab-pane fade" id="hist" role="tabpanel" aria-labelledby="hist-tab">
+                            <div class="card-body" id="showHist"></div>
+                        </div>
+                    </div>
+                </div>
 
-    <button id="histBtn" name="hist" type="button" >See history</button>
-    <div id="showHist"></div>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+
 
 </body>
 <script src="assets/js/jquery.min.js"></script>

@@ -54,7 +54,7 @@ public class StudentsDAOImpl implements StudentsDAO {
             ObjectMapper obj = new ObjectMapper();
             Students studData = fetchStudentDataFromEmail(student);
             boolean isPlaced = studData.getPlacement() != null;
-            String s = "{ \"student_data\" : { \"student_id\":" + studData.getStudent_id() + ", \"fist_name\":\"" + studData.getFirst_name() + "\", \"last_name\":\"" + studData.getLast_name() + "\", \"roll_no\":\"" + studData.getRoll_no() + "\", \"isPlaced\":\"" + isPlaced + "\", \"email\":\"" + studData.getEmail()
+            String s = "{ \"student_data\" : { \"student_id\":" + studData.getStudent_id() + ", \"first_name\":\"" + studData.getFirst_name() + "\", \"last_name\":\"" + studData.getLast_name() + "\", \"roll_no\":\"" + studData.getRoll_no() + "\", \"isPlaced\":\"" + isPlaced + "\", \"email\":\"" + studData.getEmail()
                     + "\", \"photo_path\":\"" + studData.getPhotograph_path() + "\", \"cgpa\":" + studData.getCgpa().toString() + ", \"credits\":" + studData.getTotal_credits().toString() + ", \"grad_year\":" + studData.getGraduation_year() + ", \"domain\":\"" + studData.getDomain() + "\", \"spec\":\"" + studData.getSpecialization() + "\"}";
             s += ", \"placement_list\" : [ ";
             if (!isPlaced) {
@@ -62,9 +62,7 @@ public class StudentsDAOImpl implements StudentsDAO {
                 for (Placement_Student p_s:studData.getPlacement_studentsList()) {
                     appliedList.add(p_s.getPlacement().getId());
                 }
-                if(appliedList==null || appliedList.isEmpty()){
-                    appliedList.add(0);
-                }
+                appliedList.add(-1);
                 Query query;
                 query = session.createQuery("select p from Placement p left join p.placement_filter f where p.id not in (:appliedList) and p.minimum_grade <= :studGrade");
                 query.setParameter("appliedList", appliedList);
@@ -104,7 +102,7 @@ public class StudentsDAOImpl implements StudentsDAO {
         try {
             Students studData = fetchStudentDataFromEmail(student);
             Query query;
-            query = session.createQuery("select ps from Placement_Student ps inner join ps.students s where ps.students.student_id = :studId");
+            query = session.createQuery("select ps from Placement_Student ps inner join ps.students s where ps.students.student_id = :studId order by ps.date desc");
             query.setParameter("studId", studData.getStudent_id());
             List<Placement_Student> list = query.getResultList();
             return list;

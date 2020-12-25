@@ -1,7 +1,12 @@
 
 let cv_file = document.getElementById("cv_application");
-let hist_btn = document.getElementById("histBtn");
-async function fetchPlacements(){
+let hist_btn = document.getElementById("hist-tab");
+document.getElementById('cv_application').onchange = function(){
+    document.getElementById('upload_file_name').innerText = document.getElementById('cv_application').files[0].name;
+};
+
+async function fetchPlacements()
+{
     let i;
     let response = await fetch('api/placements/show_list', {
         method: 'POST',
@@ -16,63 +21,110 @@ async function fetchPlacements(){
     return result;
 }
 
-window.onload = fetchPlacements().then(result => {
+window.onload = fetchPlacements().then( result => {
+    console.log("this is result->");
 
-    // var pdata = JSON.parse(JSON.stringify(result)).placement_list;
-    //Load data into table
+    console.log(result.student_data);
+    document.getElementById("ppfullname").innerHTML =result.student_data.first_name + " " + result.student_data.last_name;
+    document.getElementById("pprollnumber").innerHTML =result.student_data.roll_no;
+    document.getElementById("ppemail").innerHTML =result.student_data.email;
+    document.getElementById("ppdomain").innerHTML =result.student_data.domain;
+    document.getElementById("ppspecial").innerHTML =(result.student_data.spec==="")? 'None' : result.student_data.spec;
+    document.getElementById("ppcgpa").innerHTML =result.student_data.cgpa.toFixed(2);
+    document.getElementById("img1").src=result.student_data.photo_path;
+
     document.getElementById("student_id").innerText = result.student_data.student_id;
+
+
+    //If already placed
+    if(result.student_data.isPlaced === 'true'){
+        let div = document.createElement('div');
+        div.className = 'card text-white bg-success mb-3';
+
+        let div2 = document.createElement('div');
+        div2.className = 'card-header';
+        div2.innerHTML = 'Congratulations! , you have been accepted at ';
+        let div3 = document.createElement('div');
+        div3.className = 'card-body';
+
+        let temp = document.createElement('h5');
+        temp.className ='card-title';
+        temp.innerHTML = result.company_details.org_name;
+        div3.appendChild(temp);
+
+        temp = document.createElement('h5');
+        temp.className ='card-title';
+        temp.innerHTML = 'Profile : ' + result.company_details.profile;
+        div3.appendChild(temp);
+
+        temp = document.createElement('p');
+        temp.className ='card-text';
+        temp.innerHTML = 'Job Description : ' + result.company_details.description;
+        div3.appendChild(temp);
+        div3.appendChild(temp);
+        div2.appendChild(div3);
+        div.appendChild(div2);
+        document.getElementById('showData').appendChild(div);
+        return;
+    }
+
+//                     <div class="card border border-primary mb-3" >
+//                       <div class="card-header">Header</div>
+//                       <div class="card-body text-dark">
+//                         <h5 class="card-title">Dark card title</h5>
+//                         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+//                         <a href="#" class="btn btn-primary">Go somewhere</a>
+//                       </div>
+    //Load data into table
     let pdata = result.placement_list;
-    var col = [];
-    for (i = 0; i < pdata.length; i++) {
-        for (var key in pdata[i]) {
-            if (col.indexOf(key) === -1) {
-                col.push(key);
-            }
-        }
-    }
-
+    let btns = [];
     // CREATE DYNAMIC TABLE.
-    var table = document.createElement("table");
+    for(let i = 0; i < pdata.length; i++){
+        let div = document.createElement('div');
+        div.className = 'card border border-primary mb-3';
 
-    // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+        let div2 = document.createElement('div');
+        div2.className = 'card-header';
+        div2.innerHTML = pdata[i]['org_name'];
+        let div3 = document.createElement('div');
+        div3.className = 'card-body text-dark';
 
-    var tr = table.insertRow(-1);                   // TABLE ROW.
+        let temp = document.createElement('h5');
+        temp.className ='card-title';
+        temp.innerHTML = pdata[i]['profile'];
+        div3.appendChild(temp);
 
-    for (i = 0; i < col.length; i++) {
-        let th = document.createElement("th");      // TABLE HEADER.
-        th.innerHTML = col[i];
-        tr.appendChild(th);
-    }
-    let th = document.createElement("th");
-    th.innerHTML = "";
-    tr.appendChild(th);
+        temp = document.createElement('p');
+        temp.className ='card-text';
+        temp.innerHTML = pdata[i]['description'];
+        div3.appendChild(temp);
 
-    // ADD JSON DATA TO THE TABLE AS ROWS.
-    btns =[];
-    for (i = 0; i < pdata.length; i++) {
+        temp = document.createElement('p');
+        temp.className ='card-text';
+        temp.innerHTML = 'Intake : ' + pdata[i]['intake']+ ' &emsp; Minimum Grade : ' + pdata[i]['minimum_grade'];
+        div3.appendChild(temp);
 
-        tr = table.insertRow(-1);
-
-        for (var j = 0; j < col.length; j++) {
-            var tabCell = tr.insertCell(-1);
-            tabCell.innerHTML = pdata[i][col[j]];
-        }
-        var applyBtn = tr.insertCell(-1);
-        var btn = document.createElement('button');
+        let btn = document.createElement('button');
+        btn.setAttribute("class","btn btn-primary");
         btn.name=pdata[i]["placement_id"];
         btn.value="Apply";
         btn.innerText="Apply";
         btns.push(btn);
-        // btn.onclick = function(){
-        //     window.sessionStorage["apply_plac_id"] = btn.name;
-        //     window.location.href = "applyForm.html";
-        // };
-        applyBtn.appendChild(btn);
+        div3.appendChild(btn);
+
+        div2.appendChild(div3);
+        div.appendChild(div2);
+        document.getElementById('showData').appendChild(div);
+
     }
+
     for(let i=0; i<btns.length;i++){
         (function(i) {
             btns[i].onclick = async function() {
                 // window.sessionStorage["apply_plac_id"] = btns[i].name;
+                btns[i].innerText = "Applied";
+                btns[i].className = 'btn btn-success';
+                btns[i].disabled = true;
                 var cv_application="";
                 if(cv_file.files!==undefined && cv_file.files.length > 0){
                     var reader = new FileReader();
@@ -109,6 +161,7 @@ window.onload = fetchPlacements().then(result => {
                         body: form_data
                     });
                     const result = await response.json();
+
                     return result;
 
                 }
@@ -116,11 +169,6 @@ window.onload = fetchPlacements().then(result => {
             }
         })(i);
     }
-
-    // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
-    var divContainer = document.getElementById("showData");
-    divContainer.innerHTML = "";
-    divContainer.appendChild(table);
 
 });
 
@@ -148,17 +196,14 @@ hist_btn.addEventListener('click', function(){
         let i;
         let pdata2 = res2.application_list;
         console.log(res2);
-        var col2 = [];
-        for (i = 0; i < pdata2.length; i++) {
-            for (let key in pdata2[i]) {
-                if (col2.indexOf(key) === -1) {
-                    col2.push(key);
-                }
-            }
-        }
+        let col2names= ['Organization Name', 'Profile', 'About','Acceptance Status','Comments','Application Date'];
+        let col2 = ['org_name','profile','about','acceptance','comments','date'];
 
         // CREATE DYNAMIC TABLE.
         var table2 = document.createElement("table");
+        //-- adding class --"//
+        table2.setAttribute("class","table table-striped table-hover")
+        // adding bootstrap class to the table
 
         // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
 
@@ -166,7 +211,7 @@ hist_btn.addEventListener('click', function(){
 
         for (i = 0; i < col2.length; i++) {
             let th = document.createElement("th");      // TABLE HEADER.
-            th.innerHTML = col2[i];
+            th.innerHTML = col2names[i];
             tr.appendChild(th);
         }
 
@@ -174,6 +219,11 @@ hist_btn.addEventListener('click', function(){
         for (i = 0; i < pdata2.length; i++) {
 
             tr = table2.insertRow(-1);
+            if(pdata2[i]['acceptance']==='ACCEPTED'){
+                tr.className="table-success";
+            }else if(pdata2[i]['acceptance']==='REJECTED'){
+                tr.className="table-danger";
+            }
 
             for (let j = 0; j < col2.length; j++) {
                 let tabCell = tr.insertCell(-1);
@@ -188,3 +238,4 @@ hist_btn.addEventListener('click', function(){
 
     })
 });
+
